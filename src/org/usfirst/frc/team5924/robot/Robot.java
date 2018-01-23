@@ -6,7 +6,13 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.interfaces.Potentiometer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -25,15 +31,25 @@ public class Robot extends IterativeRobot {
 	SpeedControllerGroup m_right = new SpeedControllerGroup(m_frontRight, m_rearRight);
 
 	DifferentialDrive m_drive = new DifferentialDrive(m_left, m_right);
-
+	
 	Joystick leftJoy = new Joystick(1);
 	
 	Timer timer = new Timer();
-
+	
+	Compressor c = new Compressor(0);
+	
+	Potentiometer pot = new AnalogPotentiometer(0, 3600, 30);
+	/**10 revolutions of 360 degrees to extend to maximum length: 6 inches
+	 * so 10 * 360 = 3600 degrees maximum rotation
+	 */
+	double potDegrees = pot.get();
+	DoubleSolenoid mySol1 = new DoubleSolenoid(1, 2);
+	DoubleSolenoid mySol2 = new DoubleSolenoid(0, 3);
+	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
-	 */
+	 
 	@Override
 	public void robotInit() {
 	}
@@ -64,8 +80,11 @@ public class Robot extends IterativeRobot {
 	 //This function is called once each time the robot enters tele-operated
 	 //mode
 	
+	*/
+	
 	@Override
 	public void teleopInit() {
+		
 	}
 
 	 //This function is called periodically during operator control
@@ -73,10 +92,31 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		
-		double value = leftJoy.getRawAxis(1);
+		/** double value = leftJoy.getRawAxis(1);
 		double value1 = leftJoy.getRawAxis(4);
 		m_drive.arcadeDrive(value, value1);
+		m_frontLeft.set(leftJoy.getRawAxis(1));
+		*/
 		
+		
+		if (leftJoy.getRawButtonPressed(4)) {
+		
+			mySol1.set(DoubleSolenoid.Value.kForward);
+			mySol2.set(DoubleSolenoid.Value.kForward);
+			
+		
+		}
+		if (leftJoy.getRawButtonPressed(3)) {
+			
+			mySol1.set(DoubleSolenoid.Value.kReverse);
+			mySol2.set(DoubleSolenoid.Value.kReverse);
+		}
+		
+		if (leftJoy.getRawButtonPressed(2)){
+			
+			System.out.println(potDegrees);
+			
+		}
 	}
 }
 
